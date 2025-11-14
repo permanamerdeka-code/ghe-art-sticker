@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ghe Art Sticker Slot | Final Gacor</title>
+<style>
+:root{
+  --color-gold:#ffda00;
+  --color-dark-gold:#ccae00;
+  --color-background-dark:rgba(20,10,0,0.9);
+  --color-highlight:#00eaff;
+  --color-freespin:#ff00ff;
+}
+
+/* Reset */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiEhs7IJPSHBEBFPFqABtDaWmNofDf5bGkdN7TRyHVnnifue3-tnjUmv9Svcp9rA0itKG6E_A_U-EkISPk7bi400ejW6BvcUSTBwrfpVlJZYAer2lVl-363V7vnTiJC37kVZabI09SogxLXM0RIYTMS6Y3Zbpg_uG7-ZTfVKfiSSIAe-VvyICUO5y2CTBCF/s320/ChatGPT%20Image%2013%20Nov%202025__17.48.38.png') no-repeat center center fixed;
+  background-size:cover;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color:#fff;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  position:relative;
+  padding:0 8px 40px;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:0;pointer-events:none;
+}
+
+/* Floating character (use your provided image). 
+   Mobile: behind board; Desktop: right of board.
+*/
+.floating-character{
+  position: fixed;
+  left: 50%;
+  top: 6vh;
+  transform: translateX(-50%);
+  pointer-events: none;
+  width: auto;
+  height: 45vh;
+  object-fit: contain;
+  z-index: 10;
+  filter: drop-shadow(0 12px 18px rgba(0,0,0,0.6));
+  animation: float-bob 3s ease-in-out infinite;
+}
+@keyframes float-bob{
+  0%{ transform: translateX(-50%) translateY(0); }
+  50%{ transform: translateX(-50%) translateY(-14px); }
+  100%{ transform: translateX(-50%) translateY(0); }
+}
+
+/* container (game board) */
+.container{
+  position:relative;
+  z-index:20;
+  width:90%;
+  max-width:500px;
+  margin-top: calc(48vh);
+  padding:22px;
+  background:var(--color-background-dark);
+  border-radius:14px;
+  border:4px solid var(--color-gold);
+  box-shadow:0 0 30px var(--color-gold);
+}
+@media(min-width:769px){
+  .container{ margin-top: 8vh; }
+}
+
+/* visuals */
+h1{color:var(--color-gold);text-shadow:0 0 10px rgba(0,0,0,0.7);margin:0 0 8px 0}
+.info-bar{font-size:1.02rem;margin-bottom:12px;padding:8px 0;border-bottom:2px solid var(--color-gold);border-top:1px solid rgba(255,255,255,0.02)}
+.info-bar span{color:var(--color-highlight);font-weight:bold}
+
+/* Slot grid */
+.slot-machine{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  grid-template-rows:repeat(3,85px);
+  gap:6px;
+  background:rgba(0,0,0,0.55);
+  padding:8px;
+  border-radius:10px;
+  box-shadow:inset 0 0 15px var(--color-dark-gold);
+  border:3px solid var(--color-gold);
+}
+@media(max-width:600px){
+  .slot-machine{ grid-template-rows:repeat(3,65px); gap:4px; padding:6px; }
+}
+.slot{
+  background:rgba(255,255,255,0.04);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.slot img{
+  width:90%;
+  height:90%;
+  object-fit:contain;
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+  animation: land 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.slot.highlight{
+  background:rgba(255,255,0,0.95);
+  border-color:#ff0000;
+  box-shadow:0 0 20px 8px #ff0000;
+  transform:scale(1.03);
+}
+@keyframes land { 0%{transform:scale(0.6);opacity:0} 100%{transform:scale(1);opacity:1} }
+
+/* controls */
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.bet-controls{display:flex;justify-content:space-between;gap:10px}
+button{
+  background:var(--color-gold);
+  border:none;
+  padding:10px 14px;
+  border-radius:18px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 4px var(--color-dark-gold);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+button:active{transform:translateY(3px); box-shadow: 0 2px var(--color-dark-gold);}
+button:disabled { cursor: not-allowed; background: #555; box-shadow: 0 4px #333; }
+.spin-button{background:var(--color-highlight);box-shadow:0 5px #00a0b0}
+.buy-scatter-btn{background:var(--color-freespin);color:#fff;box-shadow:0 5px #a000a0}
+
+/* result */
+#result-message{margin-top:12px;font-size:1.05rem;min-height:40px}
+
+/* lightning */
+.lightning{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.85);
+  z-index:9998;
+  pointer-events:none;
+  opacity:0;
+}
+.lightning.strike{ animation: strike 0.28s ease-in-out 1; }
+@keyframes strike { 0%,100%{opacity:0} 50%{opacity:1} }
+
+/* Gacor badge styling (JS will create element) */
+.gacor-badge{
+  position:absolute;
+  right:18px;
+  top:12px;
+  padding:6px 10px;
+  background:rgba(0,0,0,0.5);
+  border:1px solid #ffda00;
+  border-radius:10px;
+  font-size:13px;
+  z-index:9999;
+  color:#ffda00;
+}
+
+/* desktop layout tweak */
+@media(min-width:1000px){
+  body{ padding-left: 40px; padding-right: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- floating character (use your GIF/PNG) -->
+<img id="floatingCharacter" class="floating-character"
+ src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5dZeXfPZ5JhuOGIsM645Zo4uKFfcKtu8Shd7UsigqUe8n04rOGQC3JrTU0bMtd8x1D-G4rhSFV-iqaGE3RgELW-OzfKx5fGABnD1fjKTjsQcTjc9L9VJVFlMRTMZJD8RGR10tWQ014Jaq9a7x0x1a074KroxNKyw6XdB2r3a_d6YfKpaQy_jqAnhD9dpM/s320/Gemini_Generated_Image_8qogox8qogox8qog-removebg-preview.png"
+ alt="Floating Character (animasi)" />
+
+<div class="lightning" id="lightning"></div>
+
+<div class="container" id="game-container">
+  <div id="freespin-indicator" style="display:none;"></div>
+  <h1>Ghe Art Sticker Slot 🎰</h1>
+
+  <div class="info-bar">
+    Saldo: <span id="balance">100000</span> | Taruhan: <span id="bet">400</span>
+  </div>
+
+  <div class="slot-machine" id="slots" aria-hidden="false"></div>
+
+  <div class="controls">
+    <div class="bet-controls">
+      <button onclick="decreaseBet()" id="decreaseBetBtn">-</button>
+      <button class="spin-button" onclick="startSpin()" id="spinButton">🎲 SPIN</button>
+      <button onclick="increaseBet()" id="increaseBetBtn">+</button>
+    </div>
+    <button class="buy-scatter-btn" onclick="openBuyScatterMenu()">Beli Scatter (Rp<span id="buy-price">20.000</span>)</button>
+  </div>
+
+  <div id="result-message">Siap memutar slot!</div>
+</div>
+
+<!-- AUDIO -->
+<audio id="themeSong" preload="auto" loop src="https://www.dropbox.com/scl/fi/boieoss6p1cpey56fvarf/Age-of-Empires-_-Mythologies-Soundtrack-Main-Menu-Theme.mp3?rlkey=xtvieqgnlbby9386ss071v6k7&st=0ueyn9ay&dl=1"></audio>
+<audio id="spinSound" preload="auto" src="https://www.dropbox.com/scl/fi/engbag3e3yf8to5g35odv/Stones-and-Water-On-Cement.mp3?rlkey=d6tzd1rsm32dxwjthg7rngfb4&st=lcnhsl3d&dl=1"></audio>
+<audio id="winSound" preload="auto" src="https://www.dropbox.com/scl/fi/6jq3pco1wp7rhpwpf1nb7/Slot-Machine-Jackpot-Sound-Effect.mp3?rlkey=s2ezo8ui7luo2qg4xh1xepvgn&st=rybheotx&dl=1"></audio>
+<audio id="scatterSound" preload="auto" loop src="https://www.dropbox.com/scl/fi/f0q2t1gfn9kcty2c1b194/Gates-of-Olympus-Guitar-Cover.mp3?rlkey=wmcmjd5jrslewkrlnok36w16v&st=rqk1alpf&dl=1"></audio>
+
+<script>
+/* =========================
+   FINAL JS: Game + GACOR
+   ========================= */
+
+// --- IMAGE SYMBOLS ---
+const IMAGE_SYMBOLS = {
+  "kuda": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjwV__18leZ_yGLXVS29Qq6XbE0vr0T4PGM6GJVFxMW_C47ZR2ePlntsltVVpwP_N37K1liPfUpa5Y2C3vvx1vf54_xhalJryzGi61W8vOOpbdshfwC4DvU5mJlD6eIHzSpjguTum0vCnRFH8uzHBwmercjN-8HP-SBuF4P76Hvrhc1NWAYxLttjuGtrNT5/s1600/kuda.png',
+  "cutter": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEib3LEaNyJsoloi4On9d8vr8q06qwKm-CzAduupn4okPuZkRuoA_YCJVfBX5nbHlyWCeD2I8nJcE_NDJjmyrzLbyu-aX7eSPlXhKcTvQXnw9gJ6vGDEyxZZ0UyWSLIXRFK7ArVOnF6oY3mAvfC80AN1ii2jpccrGhmrpHgj8KzrLcc773tl6hOzMngMKuIn/s1600/cutter.png',
+  "kertas": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjHT3JTs6U-18-nj9-N9W0n6itjVSKQxEyturUHeN1KDFfXUTymVfL9fwm51gK-tiBZiOEm5TceZftL91garwKu6Q5cFv8gdjOPQuXvG8gG0HwlhiJJmbu7_axCboSmesknH7KIPSb1RvK1hEjkg6gG45YEdkY6hqNXnuZ7dwb9UIDj9njrt0tEkjRFl7Qb/s1600/kertas.png',
+  "gunting": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjL1fcQaYzIkZuNDToks-EQnIGC4xX2ILlyBaNC5T1vjPc265jvpwElTNgvtAC7MovwsTwgy5KD63KaAbzMyvqdC7r8HS1kdTKVGaoM2tl6B2Ew9hzrTcbOBGsSZAPxIg8Y2vROuPla6ii65ANjQRdM1uq6yKU0nTlfqnnEK0HaIDwLbpA2ZpqlQoVB575i/s1600/gunting.png',
+  "perahu": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg3KvjmEB9CeOsQ-TrsqCVmwuWBRSnFr7i0b5V6d54Me8GoCGEJc8P4sWB1vHLUA94R0kcjGM0Lwg-tPfnl7MZfhe3O8IyaIWuxpoCK4-gaFwCyEk5IlJ-B-zuZfJTluv2Y2nhPnE7glScy0dbAhLaViCGBP-S1xt089yOzFqncchxYcWKbEwkMND72_xHb/s1600/perahu.png',
+  "diamond": 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSJK24Ir-iXmkb8pncEJl64O01fUc7mWxZcmMLPeFb7kvfK8ilsQO9A0fB31llU_hpP7g8rtyFmI_Qz0nOuYzSr6ryn1isD-8qWlJODGq98gVR4el0VyQBptvK_mfxHLrgMgyjmNwGbelw7XkRb1QmiU3pUNEls-Hi2M5h8eXz8EDnpkcDFZP6ne0GXzqb/s1600/diamon.png'
+};
+
+const SYMBOL_KEYS = Object.keys(IMAGE_SYMBOLS);
+
+// --- GAME RULES ---
+const PAY_TABLE = {
+  "gunting": {3:1,4:2,5:5},
+  "kertas": {3:1,4:3,5:10},
+  "cutter": {3:2,4:5,5:20},
+  "perahu": {3:3,4:10,5:50},
+  "kuda": {3:5,4:20,5:100},
+  "diamond": {3:2,4:10,5:50}
+};
+
+const PAYLINES = [
+  [5,6,7,8,9],
+  [0,1,2,3,4],
+  [10,11,12,13,14],
+  [0,6,12,8,4],
+  [10,6,2,8,14],
+  [5,1,7,13,9],
+  [5,11,7,3,9],
+  [0,5,10,5,0],
+  [4,9,14,9,4]
+];
+
+const TOTAL_SLOTS = 15;
+const FREE_SPIN_SCATTER_COUNT = 3;
+const FREE_SPIN_REWARD = 10;
+const BET_STEP = 400;
+const BUY_SCATTER_MULTIPLIER = 50;
+
+// DOM refs
+const containerEl = document.getElementById('game-container');
+const floatingEl = document.getElementById('floatingCharacter');
+const slotsEl = document.getElementById("slots");
+const balanceEl = document.getElementById("balance");
+const betEl = document.getElementById("bet");
+const resultEl = document.getElementById("result-message");
+const spinButton = document.getElementById("spinButton");
+const lightning = document.getElementById("lightning");
+const freespinIndicator = document.getElementById("freespin-indicator");
+const buyPriceEl = document.getElementById("buy-price");
+const buyScatterBtn = document.querySelector('.buy-scatter-btn');
+const decreaseBetBtn = document.getElementById("decreaseBetBtn");
+const increaseBetBtn = document.getElementById("increaseBetBtn");
+
+const spinSound = document.getElementById("spinSound");
+const winSound = document.getElementById("winSound");
+const scatterSound = document.getElementById("scatterSound");
+const themeSong = document.getElementById("themeSong");
+
+// State
+let balance = 100000;
+let bet = 400;
+let isSpinning = false;
+let slotElements = [];
+let freeSpins = 0;
+let freeSpinMultiplier = 1;
+let scatterActive = false;
+
+/* ===== GACOR SCHEDULE (default) ===== */
+const SCHEDULE = [
+  // 19:00 - 21:59 each day => high gacor
+  { name: "Evening Gacor", type: "time", from: "19:00", to: "21:59", bias: { highValueMultiplier: 3 }, jackpotChance: 0.01 },
+
+  // weekend (Sat=6, Sun=0) => medium gacor
+  { name: "Weekend Gacor", type: "weekday", days: [6,0], bias: { highValueMultiplier: 2 }, jackpotChance: 0.005 },
+
+  // odd date => light gacor
+  { name: "Odd Date Gacor", type: "dateParity", parity: "odd", bias: { highValueMultiplier: 2 }, jackpotChance: 0.002 },
+];
+
+function getActiveSchedule(now = new Date()){
+  function timeStr(d){ return d.toTimeString().slice(0,5); }
+  const curTime = timeStr(now);
+  const curDay = now.getDay();
+  const curDate = now.getDate();
+
+  for(const s of SCHEDULE){
+    if(s.type === "time"){
+      if(s.from <= curTime && curTime <= s.to) return s;
+    } else if(s.type === "weekday"){
+      if(Array.isArray(s.days) && s.days.includes(curDay)) return s;
+    } else if(s.type === "dateParity"){
+      if(s.parity === "odd" && (curDate % 2 === 1)) return s;
+      if(s.parity === "even" && (curDate % 2 === 0)) return s;
+    }
+  }
+  return null;
+}
+
+/* GACOR Indicator UI */
+let GACOR_INDICATOR = null;
+function ensureGacorIndicator(){
+  if(GACOR_INDICATOR) return;
+  GACOR_INDICATOR = document.createElement('div');
+  GACOR_INDICATOR.className = 'gacor-badge';
+  GACOR_INDICATOR.style.color = '#ffda00';
+  GACOR_INDICATOR.textContent = '';
+  (document.getElementById('game-container') || document.body).appendChild(GACOR_INDICATOR);
+}
+function updateGacorIndicator(){
+  ensureGacorIndicator();
+  const active = getActiveSchedule();
+  if(active){
+    GACOR_INDICATOR.textContent = `GACOR MODE: ${active.name}`;
+    GACOR_INDICATOR.style.display = 'block';
+    GACOR_INDICATOR.style.color = '#ffda00';
+  } else {
+    GACOR_INDICATOR.textContent = 'NORMAL MODE';
+    GACOR_INDICATOR.style.display = 'block';
+    GACOR_INDICATOR.style.color = '#fff';
+  }
+}
+
+/* ========== AUDIO HELPERS ========== */
+function stopScatter(){
+  try{
+    scatterSound.pause();
+    scatterSound.currentTime = 0;
+    scatterActive = false;
+  }catch(e){}
+}
+function playScatterMusic(){
+  try{
+    stopTheme();
+    scatterSound.loop = true;
+    scatterSound.volume = 0.75;
+    scatterSound.currentTime = 0;
+    scatterSound.play().catch(()=>{});
+    scatterActive = true;
+  }catch(e){}
+}
+function stopTheme(){
+  try{ themeSong.pause(); themeSong.currentTime = 0; }catch(e){}
+}
+function playTheme(){
+  if(scatterActive) return;
+  try{
+    themeSong.loop = true;
+    themeSong.volume = 0.45;
+    themeSong.play().catch(()=>{});
+  }catch(e){}
+}
+function playEffect(orig, vol=0.9){
+  if(!orig) return;
+  try{
+    const s = orig.cloneNode();
+    s.volume = vol;
+    s.play().catch(()=>{});
+  }catch(e){}
+}
+
+/* ===== REPLACE getRandomSymbolKey() (with GACOR bias + FORCE_JACKPOT) ===== */
+function getRandomSymbolKey(){
+  const active = getActiveSchedule();
+  const baseWeights = {
+    "gunting": 10,
+    "kertas": 10,
+    "cutter": 8,
+    "perahu": 7,
+    "kuda": 5,
+    "diamond": 2
+  };
+
+  if(active && active.bias && active.bias.highValueMultiplier){
+    const m = active.bias.highValueMultiplier || 2;
+    baseWeights["kuda"] *= m;
+    baseWeights["perahu"] *= m;
+    baseWeights["cutter"] *= m;
+    // optional minor boost to scatter when gacor - disabled by default
+    if(active.bias.boostScatter) baseWeights["diamond"] = Math.max(baseWeights["diamond"], Math.round(baseWeights["diamond"] * (active.bias.boostScatter || 1.5)));
+  }
+
+  // Build weighted array
+  const weighted = [];
+  Object.keys(baseWeights).forEach(k => {
+    for(let i=0;i<baseWeights[k];i++) weighted.push(k);
+  });
+
+  // jackpot forcing chance when active schedule defines jackpotChance
+  const activeJackpotChance = active && typeof active.jackpotChance === 'number' ? active.jackpotChance : 0;
+  if(Math.random() < activeJackpotChance){
+    return 'FORCE_JACKPOT';
+  }
+
+  return weighted[Math.floor(Math.random() * weighted.length)];
+}
+
+/* ===== initializeSlots with FORCE_JACKPOT handling ===== */
+function initializeSlots(){
+  slotsEl.innerHTML = "";
+  slotElements = [];
+
+  // Check whether a forced jackpot should happen by calling getRandomSymbolKey once
+  let firstPick = getRandomSymbolKey();
+  let forceSymbol = null;
+  if(firstPick === 'FORCE_JACKPOT'){
+    forceSymbol = 'kuda'; // forced jackpot symbol (change if desired)
+  }
+
+  for(let i=0;i<TOTAL_SLOTS;i++){
+    const div = document.createElement('div');
+    div.className = 'slot';
+    let symbolKey;
+    if(forceSymbol){
+      symbolKey = forceSymbol;
+    } else {
+      if(i===0 && firstPick !== 'FORCE_JACKPOT') symbolKey = firstPick;
+      else {
+        symbolKey = getRandomSymbolKey();
+        if(symbolKey === 'FORCE_JACKPOT'){ symbolKey = 'kuda'; forceSymbol = 'kuda'; }
+      }
+    }
+    div.innerHTML = `<img src="${IMAGE_SYMBOLS[symbolKey]}" alt="${symbolKey}">`;
+    div.dataset.symbol = symbolKey;
+    slotsEl.appendChild(div);
+    slotElements.push(div);
+  }
+}
+
+/* ===== checkWin (unchanged) ===== */
+function checkWin(){
+  let totalWin = 0;
+  let winningIndices = new Set();
+  let scatterCount = 0;
+  let scatterIndices = [];
+
+  slotElements.forEach((el, index)=>{
+    if(el && el.dataset && el.dataset.symbol === 'diamond'){
+      scatterCount++;
+      scatterIndices.push(index);
+    }
+  });
+
+  if(scatterCount >= 3){
+    const prizeMultiplier = PAY_TABLE['diamond'][Math.min(scatterCount, 5)];
+    if(prizeMultiplier) totalWin += bet * prizeMultiplier;
+  }
+
+  PAYLINES.forEach(line=>{
+    let currentSymbol='';
+    let count=0;
+    let lineWinIndices=[];
+    for(let i=0;i<line.length;i++){
+      const index = line[i];
+      if(!slotElements[index]) continue;
+      const symbol = slotElements[index].dataset.symbol;
+
+      if(symbol === 'diamond') break; // stop line on scatter
+
+      if(i===0){
+        currentSymbol = symbol;
+        count = 1;
+        lineWinIndices = [index];
+      } else if(symbol === currentSymbol){
+        count++;
+        lineWinIndices.push(index);
+      } else break;
+    }
+
+    if(count >= 3 && PAY_TABLE[currentSymbol] && PAY_TABLE[currentSymbol][count]){
+      const prizeMultiplier = PAY_TABLE[currentSymbol][count];
+      const winAmount = bet * prizeMultiplier;
+      totalWin += winAmount;
+      lineWinIndices.forEach(idx => winningIndices.add(idx));
+    }
+  });
+
+  if(freeSpins > 0 && totalWin > 0) totalWin *= freeSpinMultiplier;
+
+  return {
+    totalReward: totalWin,
+    winningIndices: Array.from(winningIndices).concat(scatterCount >= FREE_SPIN_SCATTER_COUNT ? scatterIndices : []),
+    scatterTriggered: scatterCount >= FREE_SPIN_SCATTER_COUNT,
+    scatterCount: scatterCount
+  };
+}
+
+/* visuals */
+function showLightning(){
+  lightning.classList.add('strike');
+  setTimeout(()=> lightning.classList.remove('strike') ,400);
+}
+
+function enterFreeSpinMode(){
+  freeSpins += FREE_SPIN_REWARD;
+  freeSpinMultiplier = 3;
+  resultEl.innerHTML = `🎉 <strong>${FREE_SPIN_SCATTER_COUNT}+ SCATTER!</strong> Mendapat ${FREE_SPIN_REWARD} Free Spin!`;
+  playScatterMusic();
+  updateDisplay();
+}
+
+/* buy scatter */
+function openBuyScatterMenu(){
+  const price = calculateBuyScatterPrice();
+  if(balance < price){ alert(`Saldo tidak cukup! Diperlukan Rp${price.toLocaleString('id-ID')}. Saldo Anda: Rp${balance.toLocaleString('id-ID')}`); return; }
+
+  const isConfirmed = confirm(`Beli ${FREE_SPIN_REWARD} Free Spin dengan harga Rp${price.toLocaleString('id-ID')}?`);
+  if(isConfirmed){
+    balance -= price;
+    enterFreeSpinMode();
+    updateDisplay();
+    setTimeout(()=>startSpin(),800);
+  } else {
+    stopScatter();
+    playTheme();
+  }
+}
+
+/* start spin */
+async function startSpin(){
+  if(isSpinning) return;
+
+  slotElements.forEach(el => el.classList.remove('highlight'));
+  playEffect(spinSound, 0.9);
+
+  if(freeSpins === 0){
+    if(balance < bet){ resultEl.textContent = "Saldo tidak cukup!"; playTheme(); return; }
+    isSpinning = true;
+    spinButton.disabled = true;
+    resultEl.textContent = "Stiker berputar...";
+    balance -= bet;
+    initializeSlots();
+    await new Promise(r=>setTimeout(r,520));
+  } else {
+    isSpinning = true;
+    spinButton.disabled = true;
+    resultEl.textContent = `Free Spin... ${freeSpins} tersisa.`;
+    freeSpins--;
+    initializeSlots();
+    await new Promise(r=>setTimeout(r,520));
+  }
+
+  updateDisplay();
+
+  const spinResult = checkWin();
+  let totalWin = spinResult.totalReward;
+
+  if(totalWin > 0){
+    spinResult.winningIndices.forEach(index=>{
+      if(slotElements[index]) slotElements[index].classList.add('highlight');
+    });
+    showLightning();
+
+    if(spinResult.scatterTriggered){
+      enterFreeSpinMode();
+    } else {
+      playEffect(winSound, 0.9);
+    }
+
+    let finalMessage = `💰 <strong>MENANG!</strong> +${totalWin.toLocaleString('id-ID')}`;
+    if(freeSpins > 0 || spinResult.scatterTriggered) finalMessage = `✨ KEMENANGAN Free Spin (X${freeSpinMultiplier}) +${totalWin.toLocaleString('id-ID')}`;
+
+    resultEl.innerHTML = finalMessage;
+    balance += totalWin;
+  } else {
+    resultEl.textContent = "💔 Belum beruntung. Coba lagi!";
+  }
+
+  isSpinning = false;
+  spinButton.disabled = false;
+
+  if(freeSpins > 0){
+    await new Promise(r=>setTimeout(r,1200));
+    startSpin();
+  } else {
+    if(scatterActive){
+      stopScatter();
+      setTimeout(()=>playTheme(), 200);
+    } else {
+      playTheme();
+    }
+  }
+
+  updateDisplay();
+}
+
+/* controls */
+function increaseBet(){ if(!isSpinning && (bet + BET_STEP) <= balance){ bet += BET_STEP; updateDisplay(); } }
+function decreaseBet(){ if(!isSpinning && bet > BET_STEP){ bet -= BET_STEP; updateDisplay(); } }
+
+function calculateBuyScatterPrice(){ return bet * BUY_SCATTER_MULTIPLIER; }
+
+/* UI update */
+function updateDisplay(){
+  balanceEl.textContent = balance.toLocaleString('id-ID');
+  betEl.textContent = bet.toLocaleString('id-ID');
+  buyPriceEl.textContent = calculateBuyScatterPrice().toLocaleString('id-ID');
+  buyScatterBtn.disabled = isSpinning || balance < calculateBuyScatterPrice();
+
+  if(freeSpins>0){
+    spinButton.textContent = `FREE SPIN (${freeSpins})!`;
+    decreaseBetBtn.disabled = true;
+    increaseBetBtn.disabled = true;
+  } else {
+    spinButton.textContent = "🎲 SPIN";
+    decreaseBetBtn.disabled = isSpinning || bet <= BET_STEP;
+    increaseBetBtn.disabled = isSpinning || (bet + BET_STEP) > balance;
+  }
+  spinButton.disabled = isSpinning || (freeSpins===0 && balance < bet);
+
+  if(freeSpins>0){
+    freespinIndicator.style.display = 'block';
+    freespinIndicator.textContent = `FREE SPIN: ${freeSpins} tersisa! (X${freeSpinMultiplier})`;
+    containerEl.classList.add('freespin-mode');
+  } else {
+    freespinIndicator.style.display = 'none';
+    containerEl.classList.remove('freespin-mode');
+  }
+
+  updateGacorIndicator();
+}
+
+/* preload images */
+function preloadImages(imageUrls){ imageUrls.forEach(url=>{ const i = new Image(); i.src = url; }); }
+const allImageUrls = Object.values(IMAGE_SYMBOLS);
+if(floatingEl && floatingEl.src) allImageUrls.push(floatingEl.src);
+preloadImages(allImageUrls);
+
+/* layout helper: floating positioning desktop vs mobile */
+function positionFloating(){
+  const w = window.innerWidth;
+  if(w >= 769){
+    const rect = containerEl.getBoundingClientRect();
+    const docScrollTop = window.scrollY || document.documentElement.scrollTop;
+    floatingEl.style.position = 'absolute';
+    floatingEl.style.transform = '';
+    floatingEl.style.top = (rect.top + docScrollTop) + 'px';
+    const spaceRight = window.innerWidth - (rect.right);
+    if(spaceRight > 220){
+      floatingEl.style.left = (rect.right + 12) + 'px';
+    } else {
+      floatingEl.style.left = (rect.right - 120) + 'px';
+    }
+    floatingEl.style.height = '60vh';
+    floatingEl.style.zIndex = '30';
+    containerEl.style.zIndex = '20';
+  } else {
+    floatingEl.style.position = 'fixed';
+    floatingEl.style.left = '50%';
+    floatingEl.style.top = '6vh';
+    floatingEl.style.transform = 'translateX(-50%)';
+    floatingEl.style.height = '45vh';
+    floatingEl.style.zIndex = '10';
+    containerEl.style.zIndex = '20';
+  }
+}
+
+/* initialize on load */
+function initializeSlotsOnLoad(){
+  initializeSlots();
+  updateDisplay();
+  positionFloating();
+  // try autoplay theme per request (may be blocked until user interaction)
+  try{ themeSong.play().catch(()=>{}); }catch(e){}
+}
+
+/* respond to resize/scroll */
+window.addEventListener('resize', ()=>{ positionFloating(); updateGacorIndicator(); });
+window.addEventListener('scroll', ()=>{ if(window.innerWidth >= 769) positionFloating(); });
+
+/* start */
+initializeSlotsOnLoad();
+
+// start theme on first interaction if blocked
+function enableAudioOnInteraction(){
+  try{
+    if(!scatterActive) themeSong.play().catch(()=>{});
+  }catch(e){}
+  document.body.removeEventListener('click', enableAudioOnInteraction);
+  document.body.removeEventListener('touchend', enableAudioOnInteraction);
+}
+document.body.addEventListener('click', enableAudioOnInteraction);
+document.body.addEventListener('touchend', enableAudioOnInteraction);
+
+/* expose functions for inline onclicks */
+window.startSpin = startSpin;
+window.openBuyScatterMenu = openBuyScatterMenu;
+window.increaseBet = increaseBet;
+window.decreaseBet = decreaseBet;
+</script>
+</body>
+</html>
